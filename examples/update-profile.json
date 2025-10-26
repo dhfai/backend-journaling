@@ -1,0 +1,13 @@
+{
+  "full_name": "John Doe",
+  "bio": "Software Engineer passionate about Go and backend development",
+  "avatar": "https://example.com/avatar.jpg",
+  "date_of_birth": "1990-01-15",
+  "gender": "male",
+  "phone_number": "+1234567890",
+  "country": "United States",
+  "city": "San Francisco",
+  "timezone": "America/Los_Angeles",
+  "language": "en",
+  "theme": "dark"
+}

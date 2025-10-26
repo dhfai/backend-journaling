@@ -1,0 +1,12 @@
+{
+  "full_name": "John Doe",
+  "bio": "Software developer passionate about journaling and personal growth",
+  "date_of_birth": "1990-01-15",
+  "phone_number": "+1234567890",
+  "address": "123 Main Street, Apt 4B",
+  "city": "New York",
+  "country": "USA",
+  "timezone": "America/New_York",
+  "language": "en",
+  "avatar_url": "https://example.com/avatar.jpg"
+}

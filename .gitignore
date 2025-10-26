@@ -1,0 +1,9 @@
+.env
+keys/
+*.pem
+*.key
+tmp/
+bin/
+dist/
+.DS_Store
+agent/
