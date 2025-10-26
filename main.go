@@ -85,37 +85,44 @@ func main() {
 	r.Use(middleware.CORS())
 	r.Use(middleware.SecurityHeaders())
 
-	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+	// Health check endpoint (outside /api/v1 for monitoring)
+	r.Get("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"status":"ok"}`))
 	})
 
-	r.Route("/auth", func(r chi.Router) {
-		r.Use(middleware.RateLimit(100, time.Minute))
-		r.Post("/register", authHandler.Register)
-		r.Post("/verify-otp", authHandler.VerifyOTP)
-		r.Post("/login", authHandler.Login)
-		r.Post("/refresh", authHandler.Refresh)
-		r.Post("/logout", authHandler.Logout)
-		r.Post("/forgot-password", authHandler.ForgotPassword)
-		r.Post("/reset-password", authHandler.ResetPassword)
-		r.Post("/request-otp", authHandler.RequestOTP)
-	})
+	// API v1 routes
+	r.Route("/api/v1", func(r chi.Router) {
+		// Authentication endpoints
+		r.Route("/auth", func(r chi.Router) {
+			r.Use(middleware.RateLimit(100, time.Minute))
+			r.Post("/register", authHandler.Register)
+			r.Post("/verify-otp", authHandler.VerifyOTP)
+			r.Post("/login", authHandler.Login)
+			r.Post("/refresh", authHandler.Refresh)
+			r.Post("/logout", authHandler.Logout)
+			r.Post("/forgot-password", authHandler.ForgotPassword)
+			r.Post("/reset-password", authHandler.ResetPassword)
+			r.Post("/request-otp", authHandler.RequestOTP)
+		})
 
-	r.Route("/profile", func(r chi.Router) {
-		r.Use(middleware.Authenticate(jwtManager))
-		r.Get("/", userHandler.GetProfile)
-		r.Post("/", userHandler.CreateProfile)
-		r.Put("/", userHandler.UpdateProfile)
-		r.Put("/avatar", userHandler.UpdateAvatar)
-		r.Put("/change-password", userHandler.ChangePassword)
-	})
+		// Profile endpoints (authenticated)
+		r.Route("/profile", func(r chi.Router) {
+			r.Use(middleware.Authenticate(jwtManager))
+			r.Get("/", userHandler.GetProfile)
+			r.Post("/", userHandler.CreateProfile)
+			r.Put("/", userHandler.UpdateProfile)
+			r.Put("/avatar", userHandler.UpdateAvatar)
+			r.Put("/change-password", userHandler.ChangePassword)
+		})
 
-	r.Route("/users", func(r chi.Router) {
-		r.Use(middleware.Authenticate(jwtManager))
-		r.Use(middleware.RequireRole("admin"))
-		r.Get("/{id}", userHandler.GetUserByID)
+		// User management endpoints (admin only)
+		r.Route("/users", func(r chi.Router) {
+			r.Use(middleware.Authenticate(jwtManager))
+			r.Use(middleware.RequireRole("admin"))
+			r.Get("/{id}", userHandler.GetUserByID)
+		})
 	})
 
 	addr := fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
