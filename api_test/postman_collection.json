@@ -1,9 +1,9 @@
 {
 	"info": {
-		"name": "Backend Journaling Auth API",
-		"description": "Complete authentication API collection with all endpoints for user registration, login, password reset, and profile management.",
+		"name": "Backend Journaling API",
+		"description": "Complete API collection for authentication, notes, todos, and tasks management.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"version": "1.0.0"
+		"version": "2.0.0"
 	},
 	"variable": [
 		{
@@ -29,6 +29,26 @@
 		{
 			"key": "test_password",
 			"value": "SecurePassword123!",
+			"type": "string"
+		},
+		{
+			"key": "note_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "block_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "todo_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "task_id",
+			"value": "",
 			"type": "string"
 		}
 	],
@@ -476,6 +496,521 @@
 				}
 			],
 			"description": "Admin-only endpoints requiring admin role in addition to authentication."
+		},
+		{
+			"name": "Notes",
+			"item": [
+				{
+					"name": "Create Note",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('note_id', jsonData.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"My First Note\",\n  \"tags\": [\"personal\", \"daily\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notes",
+							"host": ["{{base_url}}"],
+							"path": ["notes"]
+						},
+						"description": "Create a new note with title and optional tags."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Notes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notes",
+							"host": ["{{base_url}}"],
+							"path": ["notes"]
+						},
+						"description": "Get all notes for the authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Note by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notes/{{note_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["notes", "{{note_id}}"]
+						},
+						"description": "Get a specific note with all its blocks."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Note",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Note Title\",\n  \"tags\": [\"work\", \"important\"],\n  \"is_pinned\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notes/{{note_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["notes", "{{note_id}}"]
+						},
+						"description": "Update note title, tags, or pinned status."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Note",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notes/{{note_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["notes", "{{note_id}}"]
+						},
+						"description": "Delete a note and all its blocks."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Block to Note",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('block_id', jsonData.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"paragraph\",\n  \"content_md\": \"This is a paragraph block with **markdown** support.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notes/{{note_id}}/blocks",
+							"host": ["{{base_url}}"],
+							"path": ["notes", "{{note_id}}", "blocks"]
+						},
+						"description": "Add a new block (paragraph, heading, todo, etc.) to a note."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Todo Block",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"todo\",\n  \"items\": [\n    {\"id\": \"t1\", \"text\": \"Buy groceries\", \"done\": false},\n    {\"id\": \"t2\", \"text\": \"Finish report\", \"done\": true}\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notes/{{note_id}}/blocks",
+							"host": ["{{base_url}}"],
+							"path": ["notes", "{{note_id}}", "blocks"]
+						},
+						"description": "Add a todo block with multiple todo items."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Block",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"content_md\": \"Updated block content with new information.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notes/{{note_id}}/blocks/{{block_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["notes", "{{note_id}}", "blocks", "{{block_id}}"]
+						},
+						"description": "Update the content of a specific block."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Block",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notes/{{note_id}}/blocks/{{block_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["notes", "{{note_id}}", "blocks", "{{block_id}}"]
+						},
+						"description": "Delete a specific block from a note."
+					},
+					"response": []
+				},
+				{
+					"name": "Reorder Blocks",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order\": [\"b3\", \"b1\", \"b2\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notes/{{note_id}}/blocks/order",
+							"host": ["{{base_url}}"],
+							"path": ["notes", "{{note_id}}", "blocks", "order"]
+						},
+						"description": "Reorder all blocks in a note by providing array of block IDs."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing notes with blocks (paragraphs, headings, todos, etc.)."
+		},
+		{
+			"name": "Todos",
+			"item": [
+				{
+					"name": "Create Todo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('todo_id', jsonData.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Buy groceries\",\n  \"priority\": \"high\",\n  \"due_date\": \"2025-10-30T00:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/todos",
+							"host": ["{{base_url}}"],
+							"path": ["todos"]
+						},
+						"description": "Create a new todo item with title, priority, and optional due date."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Todos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/todos",
+							"host": ["{{base_url}}"],
+							"path": ["todos"]
+						},
+						"description": "Get all todos for the authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Todo",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"done\": true,\n  \"priority\": \"low\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/todos/{{todo_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["todos", "{{todo_id}}"]
+						},
+						"description": "Update todo status, priority, title, or due date."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Todo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/todos/{{todo_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["todos", "{{todo_id}}"]
+						},
+						"description": "Delete a todo item."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing simple todo items."
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Create Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('task_id', jsonData.id);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Build backend API\",\n  \"description_md\": \"## Tasks\\n- Setup MongoDB\\n- Implement endpoints\\n- Write tests\",\n  \"priority\": \"high\",\n  \"deadline\": \"2025-11-05T00:00:00Z\",\n  \"tags\": [\"project\", \"backend\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks",
+							"host": ["{{base_url}}"],
+							"path": ["tasks"]
+						},
+						"description": "Create a new task with title, description, priority, deadline, and tags."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Tasks",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks",
+							"host": ["{{base_url}}"],
+							"path": ["tasks"]
+						},
+						"description": "Get all tasks for the authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Task by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "{{task_id}}"]
+						},
+						"description": "Get a specific task with all details."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"in_progress\",\n  \"priority\": \"medium\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "{{task_id}}"]
+						},
+						"description": "Update task status, priority, description, or other fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Task",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "{{task_id}}"]
+						},
+						"description": "Delete a task."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing complex tasks with descriptions and progress tracking."
 		}
 	],
 	"auth": {

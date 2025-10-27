@@ -1,0 +1,5 @@
+{
+  "status": "in_progress",
+  "priority": "medium",
+  "description_md": "## Updated Description\n- [x] Setup MongoDB\n- [x] Implement endpoints\n- [ ] Write tests\n- [ ] Deploy"
+}

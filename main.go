@@ -42,6 +42,14 @@ func main() {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
+	mongoDB, err := database.NewMongoDB(cfg.MongoDB.URI)
+	if err != nil {
+		log.Fatalf("Failed to connect to MongoDB: %v", err)
+	}
+	defer mongoDB.Disconnect(context.Background())
+
+	mongoDatabase := mongoDB.Database(cfg.MongoDB.Database)
+
 	jwtManager, err := jwt.NewManager(cfg.JWT.PrivateKeyPath, cfg.JWT.PublicKeyPath, cfg.JWT.AccessTokenDuration)
 	if err != nil {
 		log.Fatalf("Failed to initialize JWT manager: %v", err)
@@ -62,6 +70,10 @@ func main() {
 	authEventRepo := repository.NewAuthEventRepository(db)
 	profileRepo := repository.NewProfileRepository(db)
 
+	noteRepo := repository.NewNoteRepository(mongoDatabase)
+	todoRepo := repository.NewTodoRepository(mongoDatabase)
+	taskRepo := repository.NewTaskRepository(mongoDatabase)
+
 	authService := service.NewAuthService(
 		userRepo,
 		otpRepo,
@@ -72,8 +84,15 @@ func main() {
 		cfg,
 	)
 
+	noteService := service.NewNoteService(noteRepo)
+	todoService := service.NewTodoService(todoRepo)
+	taskService := service.NewTaskService(taskRepo)
+
 	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userRepo, profileRepo, authService)
+	noteHandler := handlers.NewNoteHandler(noteService)
+	todoHandler := handlers.NewTodoHandler(todoService)
+	taskHandler := handlers.NewTaskHandler(taskService)
 
 	r := chi.NewRouter()
 
@@ -122,6 +141,39 @@ func main() {
 			r.Use(middleware.Authenticate(jwtManager))
 			r.Use(middleware.RequireRole("admin"))
 			r.Get("/{id}", userHandler.GetUserByID)
+		})
+
+		// Notes endpoints (authenticated)
+		r.Route("/notes", func(r chi.Router) {
+			r.Use(middleware.Authenticate(jwtManager))
+			r.Get("/", noteHandler.GetNotes)
+			r.Post("/", noteHandler.CreateNote)
+			r.Get("/{id}", noteHandler.GetNote)
+			r.Patch("/{id}", noteHandler.UpdateNote)
+			r.Delete("/{id}", noteHandler.DeleteNote)
+			r.Post("/{id}/blocks", noteHandler.AddBlock)
+			r.Patch("/{id}/blocks/{blockId}", noteHandler.UpdateBlock)
+			r.Delete("/{id}/blocks/{blockId}", noteHandler.DeleteBlock)
+			r.Patch("/{id}/blocks/order", noteHandler.ReorderBlocks)
+		})
+
+		// Todos endpoints (authenticated)
+		r.Route("/todos", func(r chi.Router) {
+			r.Use(middleware.Authenticate(jwtManager))
+			r.Get("/", todoHandler.GetTodos)
+			r.Post("/", todoHandler.CreateTodo)
+			r.Patch("/{id}", todoHandler.UpdateTodo)
+			r.Delete("/{id}", todoHandler.DeleteTodo)
+		})
+
+		// Tasks endpoints (authenticated)
+		r.Route("/tasks", func(r chi.Router) {
+			r.Use(middleware.Authenticate(jwtManager))
+			r.Get("/", taskHandler.GetTasks)
+			r.Post("/", taskHandler.CreateTask)
+			r.Get("/{id}", taskHandler.GetTask)
+			r.Patch("/{id}", taskHandler.UpdateTask)
+			r.Delete("/{id}", taskHandler.DeleteTask)
 		})
 	})
 

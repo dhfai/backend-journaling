@@ -1,0 +1,15 @@
+{
+  "type": "todo",
+  "items": [
+    {
+      "id": "t1",
+      "text": "Setup backend",
+      "done": true
+    },
+    {
+      "id": "t2",
+      "text": "Buat API notes",
+      "done": false
+    }
+  ]
+}

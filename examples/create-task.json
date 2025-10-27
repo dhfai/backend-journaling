@@ -1,0 +1,6 @@
+{
+  "title": "Deploy ke server",
+  "description_md": "- Gunakan Docker\n- Setup Nginx",
+  "priority": "high",
+  "tags": ["devops", "deployment"]
+}

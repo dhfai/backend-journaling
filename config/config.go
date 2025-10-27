@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	Database DatabaseConfig
+	MongoDB  MongoDBConfig
 	JWT      JWTConfig
 	OTP      OTPConfig
 	SMTP     SMTPConfig
@@ -22,6 +23,11 @@ type DatabaseConfig struct {
 	Password string
 	DBName   string
 	SSLMode  string
+}
+
+type MongoDBConfig struct {
+	URI      string
+	Database string
 }
 
 type JWTConfig struct {
@@ -77,6 +83,10 @@ func Load() (*Config, error) {
 			Password: getEnv("DB_PASSWORD", "postgres"),
 			DBName:   getEnv("DB_NAME", "journaling_auth"),
 			SSLMode:  getEnv("DB_SSLMODE", "disable"),
+		},
+		MongoDB: MongoDBConfig{
+			URI:      getEnv("MONGO_URI", "mongodb://localhost:27017"),
+			Database: getEnv("MONGO_DATABASE", "journaling"),
 		},
 		JWT: JWTConfig{
 			PrivateKeyPath:       getEnv("JWT_PRIVATE_KEY_PATH", "./keys/jwt_private.pem"),

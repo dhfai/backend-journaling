@@ -1,128 +1,367 @@
-# Backend Journaling - Authentication System
+# Backend Journaling API
 
-A secure authentication system built with Go, PostgreSQL, and JWT tokens.
+Backend API untuk aplikasi journaling yang modern dengan dukungan Notes, Tasks, dan Todos. Dibangun dengan **Go**, menggunakan **PostgreSQL** untuk autentikasi dan **MongoDB** untuk data journaling.
 
-## Features
+## 🚀 Features
 
-- User registration with email OTP verification
-- Login with JWT access tokens and refresh tokens
-- Password reset with OTP
-- Profile management
-- Role-based access control
-- Rate limiting
-- Secure password hashing (Argon2id)
-- Email delivery via SMTP
-- Audit logging
+### ✅ Authentication & Authorization
+- User registration dengan email verification (OTP)
+- JWT-based authentication (Access & Refresh Tokens)
+- Password reset via OTP
+- Role-based access control (Admin/User)
+- Secure password hashing dengan Argon2
 
-## Prerequisites
+### 📝 Notes Management
+- Buat, edit, hapus notes
+- Support untuk multiple block types:
+  - Paragraph (Markdown)
+  - Heading (Markdown)
+  - Todo list dalam note
+- Reorder blocks
+- Tagging dan pinning notes
+- Per-user isolation
 
-- Go 1.21+
-- PostgreSQL 14+
-- SMTP server (Gmail, SendGrid, etc.)
+### ✅ Todos
+- Simple todo list management
+- Priority levels (low, medium, high)
+- Due dates
+- Mark as done/undone
 
-## Setup
+### 📊 Tasks
+- Task management dengan status tracking
+- Status: todo, in_progress, done
+- Priority levels
+- Deadline support
+- Tags untuk kategorisasi
+- Markdown description
 
-1. **Clone and install dependencies**
-   ```bash
-   go mod download
-   ```
+## 🏗️ Tech Stack
 
-2. **Generate JWT keys**
-   ```bash
-   chmod +x scripts/generate-keys.sh
-   ./scripts/generate-keys.sh
-   ```
+- **Language**: Go 1.21+
+- **Databases**:
+  - PostgreSQL (Auth, Users, Profiles)
+  - MongoDB (Notes, Tasks, Todos)
+- **Router**: Chi v5
+- **JWT**: golang-jwt/jwt v5
+- **Password**: Argon2 hashing
+- **Email**: SMTP support
 
-3. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-4. **Create database**
-   ```sql
-   CREATE DATABASE journaling_auth;
-   ```
-
-5. **Run the server**
-   ```bash
-   go run main.go
-   ```
-
-The server will start on `http://localhost:8080` (or your configured port).
-
-## 🧪 Testing with Postman
-
-Import the Postman collection for easy API testing:
-
-1. **Import Collection**: `postman_collection.json`
-2. **Import Environment**: `postman_environment_local.json` or `postman_environment_production.json`
-3. Select the environment from dropdown (top right)
-4. Start testing! Tokens are auto-saved after login.
-
-📖 See [POSTMAN_GUIDE.md](POSTMAN_GUIDE.md) for detailed instructions.
-
-## API Endpoints
-
-### Authentication
-- `POST /auth/register` - Register new user
-- `POST /auth/verify-otp` - Verify OTP after registration
-- `POST /auth/login` - Login user
-- `POST /auth/refresh` - Refresh access token
-- `POST /auth/logout` - Logout user
-- `POST /auth/forgot-password` - Request password reset
-- `POST /auth/reset-password` - Reset password with OTP
-- `POST /auth/request-otp` - Request new OTP
-
-### Profile (Authenticated)
-- `GET /profile` - Get user profile
-- `PUT /profile` - Update user profile
-- `PUT /profile/change-password` - Change password
-
-### Admin (Authenticated + Admin Role)
-- `GET /users/:id` - Get user by ID
-
-### Health
-- `GET /health` - Health check
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 .
-├── config/              # Configuration management
+├── config/           # Configuration management
 ├── internal/
-│   ├── database/        # Database setup and migrations
-│   ├── handlers/        # HTTP handlers
-│   ├── middleware/      # Middleware components
-│   ├── models/          # Data models
-│   ├── repository/      # Database repositories
-│   └── service/         # Business logic
-├── pkg/
-│   ├── email/           # Email sender
-│   ├── jwt/             # JWT token management
-│   ├── otp/             # OTP generation and verification
-│   ├── password/        # Password hashing
-│   └── token/           # Refresh token utilities
-├── scripts/             # Utility scripts
-├── main.go              # Application entry point
-└── README.md
+│   ├── database/     # Database connections (PostgreSQL & MongoDB)
+│   ├── handlers/     # HTTP request handlers
+│   ├── middleware/   # Auth, CORS, Rate limiting, Security
+│   ├── models/       # Data models (PostgreSQL & MongoDB)
+│   ├── repository/   # Data access layer
+│   └── service/      # Business logic
+├── pkg/              # Reusable packages
+│   ├── email/        # Email sending
+│   ├── jwt/          # JWT token management
+│   ├── otp/          # OTP generation & verification
+│   ├── password/     # Password hashing
+│   └── token/        # Token generation
+├── examples/         # API request examples
+└── keys/             # RSA keys for JWT
 ```
 
-## Security Features
+## 🔧 Installation
 
-- Argon2id password hashing
-- RS256 JWT signing
-- OTP with SHA256 hashing + pepper
+### Prerequisites
+
+- Go 1.21+
+- PostgreSQL 12+
+- MongoDB 4.4+
+- SMTP server access (Gmail, etc.)
+
+### Setup
+
+1. Clone repository:
+```bash
+git clone <repository-url>
+cd backend-journaling
+```
+
+2. Install dependencies:
+```bash
+go mod download
+```
+
+3. Generate JWT keys:
+```bash
+./scripts/generate-keys.sh
+```
+
+4. Setup environment variables:
+```bash
+cp .env.example .env
+# Edit .env dengan konfigurasi Anda
+```
+
+5. Setup PostgreSQL database:
+```bash
+createdb journaling_auth
+```
+
+6. Setup MongoDB (optional, bisa menggunakan default):
+```bash
+# MongoDB akan membuat database otomatis
+```
+
+7. Run migrations (auto-run on startup):
+```bash
+go run main.go
+```
+
+## 🌍 Environment Variables
+
+```env
+# PostgreSQL
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=journaling_auth
+DB_SSLMODE=disable
+
+# MongoDB
+MONGO_URI=mongodb://localhost:27017
+MONGO_DATABASE=journaling
+
+# JWT
+JWT_PRIVATE_KEY_PATH=./keys/jwt_private.pem
+JWT_PUBLIC_KEY_PATH=./keys/jwt_public.pem
+JWT_ACCESS_TOKEN_DURATION=15m
+JWT_REFRESH_TOKEN_DURATION=168h
+
+# OTP
+OTP_PEPPER=your-secret-pepper-change-this
+OTP_TTL_MINUTES=5
+OTP_MAX_ATTEMPTS=5
+
+# SMTP
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+SMTP_FROM_EMAIL=your-email@gmail.com
+SMTP_FROM_NAME=Journaling App
+
+# Server
+SERVER_PORT=8080
+SERVER_HOST=0.0.0.0
+ENVIRONMENT=development
+```
+
+## 🚀 Running the Application
+
+### Development
+```bash
+go run main.go
+```
+
+### Production (Build)
+```bash
+go build -o bin/backend-journaling
+./bin/backend-journaling
+```
+
+### Using Make
+```bash
+make run      # Run in development
+make build    # Build binary
+make test     # Run tests
+```
+
+## 📚 API Documentation
+
+### Base URL
+```
+http://localhost:8080/api/v1
+```
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/auth/register` | Register new user | No |
+| POST | `/auth/verify-otp` | Verify OTP code | No |
+| POST | `/auth/login` | Login user | No |
+| POST | `/auth/refresh` | Refresh access token | No |
+| POST | `/auth/logout` | Logout user | No |
+| POST | `/auth/forgot-password` | Request password reset | No |
+| POST | `/auth/reset-password` | Reset password with OTP | No |
+
+### Profile Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/profile` | Get user profile | Yes |
+| POST | `/profile` | Create profile | Yes |
+| PUT | `/profile` | Update profile | Yes |
+| PUT | `/profile/avatar` | Update avatar | Yes |
+| PUT | `/profile/change-password` | Change password | Yes |
+
+### Notes Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/notes` | List all notes | Yes |
+| POST | `/notes` | Create new note | Yes |
+| GET | `/notes/:id` | Get note details | Yes |
+| PATCH | `/notes/:id` | Update note | Yes |
+| DELETE | `/notes/:id` | Delete note | Yes |
+| POST | `/notes/:id/blocks` | Add block to note | Yes |
+| PATCH | `/notes/:id/blocks/:blockId` | Update block | Yes |
+| DELETE | `/notes/:id/blocks/:blockId` | Delete block | Yes |
+| PATCH | `/notes/:id/blocks/order` | Reorder blocks | Yes |
+
+### Todos Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/todos` | List all todos | Yes |
+| POST | `/todos` | Create new todo | Yes |
+| PATCH | `/todos/:id` | Update todo | Yes |
+| DELETE | `/todos/:id` | Delete todo | Yes |
+
+### Tasks Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/tasks` | List all tasks | Yes |
+| POST | `/tasks` | Create new task | Yes |
+| GET | `/tasks/:id` | Get task details | Yes |
+| PATCH | `/tasks/:id` | Update task | Yes |
+| DELETE | `/tasks/:id` | Delete task | Yes |
+
+## 📝 API Examples
+
+### Create Note
+```bash
+curl -X POST http://localhost:8080/api/v1/notes \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d @examples/create-note.json
+```
+
+### Add Block to Note
+```bash
+curl -X POST http://localhost:8080/api/v1/notes/{note_id}/blocks \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d @examples/add-block-paragraph.json
+```
+
+### Create Todo
+```bash
+curl -X POST http://localhost:8080/api/v1/todos \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d @examples/create-todo.json
+```
+
+### Create Task
+```bash
+curl -X POST http://localhost:8080/api/v1/tasks \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d @examples/create-task.json
+```
+
+## 🏛️ Architecture
+
+### Database Schema
+
+**PostgreSQL (Auth)**:
+- users
+- otps
+- refresh_tokens
+- auth_events
+- profiles
+
+**MongoDB (Journaling)**:
+- notes (dengan embedded blocks)
+- todos
+- tasks
+
+### Key Integration Points
+
+1. **User Authentication**: PostgreSQL JWT → MongoDB user_id (as string)
+2. **Data Isolation**: Semua query MongoDB filtered by user_id dari JWT claims
+3. **Clean Architecture**: Repository → Service → Handler pattern
+
+## 🔒 Security Features
+
+- JWT dengan RSA-256 signing
+- Argon2 password hashing
+- OTP-based email verification
 - Rate limiting
 - CORS protection
 - Security headers
-- Audit logging
-- Constant-time comparisons
+- SQL injection prevention (prepared statements)
+- NoSQL injection prevention (bson queries)
 
-## Environment Variables
+## 🧪 Testing
 
-See `.env.example` for all configuration options.
+```bash
+# Run all tests
+go test ./...
 
-## License
+# Run with coverage
+go test -cover ./...
 
-MIT
+# Run specific package
+go test ./internal/service/...
+```
+
+## 📦 Building
+
+```bash
+# Build for current platform
+go build -o bin/backend-journaling
+
+# Build for Linux
+GOOS=linux GOARCH=amd64 go build -o bin/backend-journaling-linux
+
+# Build for Windows
+GOOS=windows GOARCH=amd64 go build -o bin/backend-journaling.exe
+```
+
+## 🐳 Docker (Coming Soon)
+
+```bash
+docker build -t backend-journaling .
+docker run -p 8080:8080 backend-journaling
+```
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 👤 Author
+
+**dhfai**
+
+## 🙏 Acknowledgments
+
+- Chi Router
+- MongoDB Go Driver
+- PostgreSQL
+- JWT-Go
+- Argon2
+
+---
+
+**Happy Coding! 🚀**
