@@ -79,6 +79,17 @@ Complete guide for Cross-Origin Resource Sharing:
 
 **When to read:** When integrating frontend or encountering CORS errors.
 
+### Date & Time Handling
+**[Date & Time Handling Guide](./DATE_TIME_HANDLING.md)**
+
+Flexible date/time format handling:
+- Multiple input formats supported
+- Frontend integration examples
+- Timezone handling
+- Common issues & solutions
+
+**When to read:** When working with deadlines, due dates, or timestamps.
+
 ---
 
 ## 🏗️ Development
@@ -107,8 +118,9 @@ Technical deep-dive for developers:
 1. [Quick Start Guide](./QUICK_START.md) - Setup and test
 2. [API Documentation](./API_DOCUMENTATION.md) - Endpoint reference
 3. [CORS Configuration](./CORS_CONFIGURATION.md) - Fix CORS errors
-4. [Reorder Blocks Guide](./REORDER_BLOCKS_GUIDE.md) - Feature implementation
-5. Postman Collection: `../api_test/postman_collection.json`
+4. [Date & Time Handling](./DATE_TIME_HANDLING.md) - Format dates correctly
+5. [Reorder Blocks Guide](./REORDER_BLOCKS_GUIDE.md) - Feature implementation
+6. Postman Collection: `../api_test/postman_collection.json`
 
 ### 🔧 Backend Developer
 **What you need:**
@@ -151,6 +163,12 @@ Technical deep-dive for developers:
 - Configuration: [CORS Configuration](./CORS_CONFIGURATION.md)
 - Troubleshooting: [CORS → Troubleshooting](./CORS_CONFIGURATION.md#troubleshooting)
 - Frontend Examples: [CORS → Frontend Integration](./CORS_CONFIGURATION.md#frontend-integration)
+
+### Date & Time
+- Format Guide: [Date & Time Handling](./DATE_TIME_HANDLING.md)
+- Supported Formats: [Date → Supported Formats](./DATE_TIME_HANDLING.md#supported-formats)
+- Frontend Examples: [Date → Frontend Examples](./DATE_TIME_HANDLING.md#frontend-examples)
+- Troubleshooting: [Date → Common Issues](./DATE_TIME_HANDLING.md#common-issues--solutions)
 
 ### Database
 - MongoDB Setup: [Quick Start → Setup](./QUICK_START.md#setup)
@@ -223,8 +241,9 @@ Located in `../api_test/`:
 | Implementation Summary | 400+ | Architecture, decisions, stats |
 | Reorder Blocks Guide | 200+ | Workflow, examples, errors |
 | CORS Configuration | 400+ | Setup, integration, troubleshooting |
+| Date & Time Handling | 400+ | Formats, examples, parsing |
 
-**Total:** 2,000+ lines of documentation
+**Total:** 2,400+ lines of documentation
 
 ---
 
@@ -234,8 +253,7 @@ Located in `../api_test/`:
 - ✅ API endpoint documentation
 - ✅ Quick start guide
 - ✅ Environment configuration
-- ✅ Feature guides (Reorder Blocks)
-- ✅ CORS configuration guide
+- ✅ Feature guides (Reorder Blocks, CORS, Date/Time)
 - ✅ Implementation details
 - ✅ Postman collection
 

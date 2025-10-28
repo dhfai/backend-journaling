@@ -77,6 +77,11 @@ func (h *NoteHandler) GetNotes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Ensure we return empty array instead of null
+	if notes == nil {
+		notes = []models.Note{}
+	}
+
 	WriteJSON(w, http.StatusOK, notes)
 }
 

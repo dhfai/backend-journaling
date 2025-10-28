@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"backend-journaling/internal/models"
 	"backend-journaling/internal/service"
 	"backend-journaling/pkg/jwt"
 
@@ -69,8 +70,13 @@ func (h *TaskHandler) GetTasks(w http.ResponseWriter, r *http.Request) {
 
 	tasks, err := h.service.GetUserTasks(r.Context(), claims.UserID.String())
 	if err != nil {
-		WriteError(w, http.StatusInternalServerError, "Failed to fetch tasks")
+		WriteError(w, http.StatusInternalServerError, err.Error())
 		return
+	}
+
+	// Ensure we return empty array instead of null
+	if tasks == nil {
+		tasks = []models.Task{}
 	}
 
 	WriteJSON(w, http.StatusOK, tasks)

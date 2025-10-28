@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"backend-journaling/internal/models"
 	"backend-journaling/internal/service"
 	"backend-journaling/pkg/jwt"
 
@@ -65,6 +66,11 @@ func (h *TodoHandler) GetTodos(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		WriteError(w, http.StatusInternalServerError, "Failed to fetch todos")
 		return
+	}
+
+	// Ensure we return empty array instead of null
+	if todos == nil {
+		todos = []models.Todo{}
 	}
 
 	WriteJSON(w, http.StatusOK, todos)
