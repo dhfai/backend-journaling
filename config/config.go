@@ -14,6 +14,7 @@ type Config struct {
 	OTP      OTPConfig
 	SMTP     SMTPConfig
 	Server   ServerConfig
+	CORS     CORSConfig
 }
 
 type DatabaseConfig struct {
@@ -56,6 +57,13 @@ type ServerConfig struct {
 	Port        string
 	Host        string
 	Environment string
+}
+
+type CORSConfig struct {
+	AllowedOrigins string
+	AllowedMethods string
+	AllowedHeaders string
+	MaxAge         int
 }
 
 func Load() (*Config, error) {
@@ -111,6 +119,12 @@ func Load() (*Config, error) {
 			Port:        getEnv("SERVER_PORT", "8080"),
 			Host:        getEnv("SERVER_HOST", "0.0.0.0"),
 			Environment: getEnv("ENVIRONMENT", "development"),
+		},
+		CORS: CORSConfig{
+			AllowedOrigins: getEnv("CORS_ALLOWED_ORIGINS", "*"),
+			AllowedMethods: getEnv("CORS_ALLOWED_METHODS", "GET, POST, PUT, PATCH, DELETE, OPTIONS"),
+			AllowedHeaders: getEnv("CORS_ALLOWED_HEADERS", "Content-Type, Authorization, X-Requested-With"),
+			MaxAge:         86400,
 		},
 	}, nil
 }

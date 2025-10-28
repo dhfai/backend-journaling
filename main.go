@@ -101,7 +101,12 @@ func main() {
 	r.Use(chimiddleware.Logger)
 	r.Use(chimiddleware.Recoverer)
 	r.Use(chimiddleware.Timeout(60 * time.Second))
-	r.Use(middleware.CORS())
+	r.Use(middleware.CORS(
+		cfg.CORS.AllowedOrigins,
+		cfg.CORS.AllowedMethods,
+		cfg.CORS.AllowedHeaders,
+		cfg.CORS.MaxAge,
+	))
 	r.Use(middleware.SecurityHeaders())
 
 	// Health check endpoint (outside /api/v1 for monitoring)

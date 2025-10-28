@@ -1,6 +1,16 @@
 # Backend Journaling API
 
-Backend API untuk aplikasi journaling yang modern dengan dukungan Notes, Tasks, dan Todos. Dibangun dengan **Go**, menggunakan **PostgreSQL** untuk autentikasi dan **MongoDB** untuk data journaling.
+> Modern journaling backend API with Notes, Tasks, and Todos management. Built with **Go**, using **PostgreSQL** for authentication and **MongoDB** for journaling data.
+
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://golang.org)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.4+-47A248?style=flat&logo=mongodb&logoColor=white)](https://www.mongodb.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-316192?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+
+## 📚 Documentation
+
+- **[Quick Start Guide](./docs/QUICK_START.md)** - Get started in 5 minutes
+- **[Complete API Documentation](./docs/API_DOCUMENTATION.md)** - Full endpoint reference
+- **[Reorder Blocks Guide](./docs/REORDER_BLOCKS_GUIDE.md)** - Detailed guide for block reordering
 
 ## 🚀 Features
 
@@ -14,26 +24,27 @@ Backend API untuk aplikasi journaling yang modern dengan dukungan Notes, Tasks, 
 ### 📝 Notes Management
 - Buat, edit, hapus notes
 - Support untuk multiple block types:
-  - Paragraph (Markdown)
-  - Heading (Markdown)
-  - Todo list dalam note
-- Reorder blocks
+  - **Paragraph** - Rich text dengan Markdown
+  - **Heading** - Section headers
+  - **Todo List** - Checklist dalam note
+- Reorder blocks dengan drag & drop support
 - Tagging dan pinning notes
-- Per-user isolation
+- Per-user data isolation
 
 ### ✅ Todos
-- Simple todo list management
+- Simple daily todo list management
 - Priority levels (low, medium, high)
-- Due dates
+- Due dates support
 - Mark as done/undone
+- Quick task tracking
 
 ### 📊 Tasks
-- Task management dengan status tracking
-- Status: todo, in_progress, done
+- Complex task management dengan status tracking
+- Status workflow: todo → in_progress → done
 - Priority levels
 - Deadline support
 - Tags untuk kategorisasi
-- Markdown description
+- Markdown description support
 
 ## 🏗️ Tech Stack
 
