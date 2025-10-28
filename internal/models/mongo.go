@@ -139,7 +139,7 @@ type Todo struct {
 	Title     string             `bson:"title" json:"title"`
 	Done      bool               `bson:"done" json:"done"`
 	Priority  string             `bson:"priority" json:"priority"`
-	DueDate   *FlexibleTime      `bson:"due_date,omitempty" json:"due_date,omitempty"`
+	DueDate   time.Time          `bson:"due_date,omitempty" json:"due_date,omitempty"`
 	CreatedAt time.Time          `bson:"created_at" json:"created_at"`
 	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at"`
 }
