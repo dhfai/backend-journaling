@@ -73,6 +73,7 @@ func main() {
 	noteRepo := repository.NewNoteRepository(mongoDatabase)
 	todoRepo := repository.NewTodoRepository(mongoDatabase)
 	taskRepo := repository.NewTaskRepository(mongoDatabase)
+	noteGroupRepo := repository.NewNoteGroupRepository(mongoDatabase)
 
 	authService := service.NewAuthService(
 		userRepo,
@@ -87,12 +88,14 @@ func main() {
 	noteService := service.NewNoteService(noteRepo)
 	todoService := service.NewTodoService(todoRepo)
 	taskService := service.NewTaskService(taskRepo)
+	noteGroupService := service.NewNoteGroupService(noteGroupRepo)
 
 	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userRepo, profileRepo, authService)
 	noteHandler := handlers.NewNoteHandler(noteService)
 	todoHandler := handlers.NewTodoHandler(todoService)
 	taskHandler := handlers.NewTaskHandler(taskService)
+	noteGroupHandler := handlers.NewNoteGroupHandler(noteGroupService)
 
 	r := chi.NewRouter()
 
@@ -179,6 +182,22 @@ func main() {
 			r.Get("/{id}", taskHandler.GetTask)
 			r.Patch("/{id}", taskHandler.UpdateTask)
 			r.Delete("/{id}", taskHandler.DeleteTask)
+		})
+
+		// Note Groups endpoints (authenticated)
+		r.Route("/note-groups", func(r chi.Router) {
+			r.Use(middleware.Authenticate(jwtManager))
+			r.Get("/", noteGroupHandler.GetGroups)
+			r.Post("/", noteGroupHandler.CreateGroup)
+			r.Get("/{id}", noteGroupHandler.GetGroup)
+			r.Patch("/{id}", noteGroupHandler.UpdateGroup)
+			r.Delete("/{id}", noteGroupHandler.DeleteGroup)
+			r.Patch("/{id}/pin", noteGroupHandler.PinGroup)
+			r.Patch("/{id}/archive", noteGroupHandler.ArchiveGroup)
+			r.Post("/{id}/notes", noteGroupHandler.AddNoteToGroup)
+			r.Delete("/notes/{noteId}", noteGroupHandler.RemoveNoteFromGroup)
+			r.Post("/{id}/move-notes", noteGroupHandler.MoveNotesToGroup)
+			r.Get("/{id}/notes", noteGroupHandler.GetNotesInGroup)
 		})
 	})
 

@@ -109,14 +109,15 @@ func (ft FlexibleTime) MarshalBSONValue() (bsontype.Type, []byte, error) {
 }
 
 type Note struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	UserID    string             `bson:"user_id" json:"user_id"`
-	Title     string             `bson:"title" json:"title"`
-	Blocks    []Block            `bson:"blocks" json:"blocks"`
-	Tags      []string           `bson:"tags" json:"tags"`
-	IsPinned  bool               `bson:"is_pinned" json:"is_pinned"`
-	CreatedAt time.Time          `bson:"created_at" json:"created_at"`
-	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at"`
+	ID        primitive.ObjectID  `bson:"_id,omitempty" json:"id"`
+	UserID    string              `bson:"user_id" json:"user_id"`
+	GroupID   *primitive.ObjectID `bson:"group_id,omitempty" json:"group_id,omitempty"`
+	Title     string              `bson:"title" json:"title"`
+	Blocks    []Block             `bson:"blocks" json:"blocks"`
+	Tags      []string            `bson:"tags" json:"tags"`
+	IsPinned  bool                `bson:"is_pinned" json:"is_pinned"`
+	CreatedAt time.Time           `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time           `bson:"updated_at" json:"updated_at"`
 }
 
 type Block struct {
@@ -155,4 +156,18 @@ type Task struct {
 	Tags          []string           `bson:"tags" json:"tags"`
 	CreatedAt     time.Time          `bson:"created_at" json:"created_at"`
 	UpdatedAt     time.Time          `bson:"updated_at" json:"updated_at"`
+}
+
+type NoteGroup struct {
+	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	UserID      string             `bson:"user_id" json:"user_id"`
+	Name        string             `bson:"name" json:"name"`
+	Description *string            `bson:"description,omitempty" json:"description,omitempty"`
+	Color       *string            `bson:"color,omitempty" json:"color,omitempty"`
+	Icon        *string            `bson:"icon,omitempty" json:"icon,omitempty"`
+	IsPinned    bool               `bson:"is_pinned" json:"is_pinned"`
+	IsArchived  bool               `bson:"is_archived" json:"is_archived"`
+	NotesCount  int                `bson:"notes_count" json:"notes_count"`
+	CreatedAt   time.Time          `bson:"created_at" json:"created_at"`
+	UpdatedAt   time.Time          `bson:"updated_at" json:"updated_at"`
 }
